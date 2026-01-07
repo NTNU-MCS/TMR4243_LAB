@@ -19,7 +19,7 @@ def generate_launch_description():
         output='screen'
     )
 
-    description_launch = launch.actions.IncludeLaunchDescription(
+    simulation_launch = launch.actions.IncludeLaunchDescription(
         launch.launch_description_sources.PythonLaunchDescriptionSource(
             launch.substitutions.PathJoinSubstitution(
                 [
@@ -36,8 +36,26 @@ def generate_launch_description():
         ],
     )
 
+    dp_system_launch = launch.actions.IncludeLaunchDescription(
+        launch.launch_description_sources.PythonLaunchDescriptionSource(
+            launch.substitutions.PathJoinSubstitution(
+                [
+                    launch_ros.substitutions.FindPackageShare("cybership_dp"),
+                    "launch",
+                    "dp.launch.py",
+                ]
+            )
+        ),
+        launch_arguments=[
+            ("vessel_name", vessel_name),
+            ("vessel_model", vessel_model),
+        ],
+    )
+
+
     ld = launch.LaunchDescription()
     ld.add_action(node_utilities)
-    ld.add_action(description_launch)
+    ld.add_action(simulation_launch)
+    ld.add_action(dp_system_launch)
 
     return ld

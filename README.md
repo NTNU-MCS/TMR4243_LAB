@@ -1,4 +1,4 @@
-# CyberShip Enterprise Software Suite
+# TMR4243 Lab Exercises
 
 This software suite designed for to be used as a course material. It should not
 be taken as a basis for other projects as the software might change for the
@@ -15,6 +15,7 @@ Before proceeding with the packages, please follow the [installations for ROS](h
 python.
 
 1. Create a workspace
+
     ```bash
     mkdir -p ~/ros_ws/src
     ```
@@ -22,18 +23,21 @@ python.
 1. Go to the [Cybership Software Suite Repository](https://github.com/NTNU-MCS/cybership_software_suite) Follow the installation instructions for Cybership Software Suite
 
 1. Navigate to the workspace and clone the repository inside the workspace
+
     ```bash
     cd ~/ros_ws/src
     git clone https://github.com/NTNU-MCS/TMR4243_LAB.git
     ```
 
 1. Install ROS dependencies
+
     ```bash
     cd ~/ros_ws
     rosdep install --from-paths src --ignore-src -r -y
     ```
 
 1. After installation, install the required python packages. You should be inside a python virtual environment from the Cybership Software Suite setup.
+
     ```bash
     find ~/ros_ws/src -name "requirements*txt" -exec pip install -r {} \;
     ```
@@ -43,8 +47,9 @@ python.
 ## Quick Start
 
 ![Initial command](docs/quickstart.gif)
+
 ```bash
-ros2 launch tmr4243_utilities utilities.simulation.launch.py
+ros2 launch tmr4243_utilities demo.simulation.launch.py
 ```
 
 See the simulation
@@ -93,12 +98,15 @@ See the simulation
 ## Custom Messages
 
 - `tmr4243_interfaces/msg/observer.msg`
+
     ```
     float64[] eta
     float64[] nu
     float64[] bias
     ```
+
 - `tmr4243_interfaces/msg/reference.msg`
+
     ```
     float64[] eta_d
     float64[] eta_ds
@@ -107,7 +115,9 @@ See the simulation
     float64 v_s
     float64 v_ss
     ```
+
 - `tmr4243_interfaces/msg/s.msg`
+
     ```
     float64 s
     float64 s_dot
