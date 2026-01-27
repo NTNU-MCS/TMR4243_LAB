@@ -41,6 +41,11 @@ python.
     ```bash
     find ~/ros_ws/src -name "requirements*txt" -exec pip install -r {} \;
     ```
+1. After installing the python packages, you can build
+    ```bash
+    cd ~/ros_ws
+    colcon build --symlink-install
+    ```
 
 1. If there is any problem with the instructions, [create a github issue](https://github.com/NTNU-MCS/TMR4243_LAB/issues/new).
 
