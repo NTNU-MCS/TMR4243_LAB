@@ -41,7 +41,9 @@ python.
     ```bash
     find ~/ros_ws/src -name "requirements*txt" -exec pip install -r {} \;
     ```
+
 1. After installing the python packages, you can build
+
     ```bash
     cd ~/ros_ws
     colcon build --symlink-install
@@ -62,37 +64,46 @@ See the simulation
 
 ## Topics
 
-- **topic**: `/CSEI/control/eta`
+- **topic**: `/tmr4243/state/eta`
 
-  **type**: `std_msgs/msg/Float32Multiarray`
+  **type**: `std_msgs/msg/Float32MultiArray`
 
   **description**: Holds the navigation data for the vehicle. Position and
   orientation
 
   $\eta = [x, y, \psi]^\top$
 
-- **topic**: `/CSEI/control/u_cmd`
+- **topic**: `/tmr4243/state/nu`
 
-  **type**: `std_msgs/msg/Float64MultiArray`
+  **type**: `std_msgs/msg/Float32MultiArray`
 
-  **description**: Control inputs for the actuators. It can be published by
-  teleop node or your custom control node.
+  **description**: Body-fixed velocity (from odometry).
 
-  $u_{cmd} = [u_0, u_1, u_2, \alpha_1, \alpha_2]^\top$
+  $\nu = [u, v, r]^\top$
 
-  - $u_0 \in [-1, 1]$, Controls the force of the tunnel thruster
-  - $u_1 \in [0, 1]$, Controls the force of the port VSP thruster
-  - $u_2 \in [0, 1]$, Controls the force of the starboard VSP thruster
-  - $\alpha_1 \in [-\pi, \pi]$, Controls the force direction for port VSP thruster
-  - $\alpha_2 \in [-\pi, \pi]$, Controls the force direction for starboard VSP thruster
+- **topic**: `/tmr4243/state/tau`
 
-- **topic**: `/CSEI/control/tau`
+  **type**: `std_msgs/msg/Float32MultiArray`
 
-  **type**: `std_msgs/msg/Float64MultiArray`
-
-  **description**: body fixed force. It is published by the simulator.
+  **description**: Body-fixed force computed from the commanded thrusters.
 
   $\tau = [F_x, F_y, M_z]^\top$
+
+- **topic**: `/tmr4243/command/u`
+
+  **type**: `std_msgs/msg/Float32MultiArray`
+
+  **description**: Control inputs for the actuators. Published by the teleop node
+  or your custom control node and converted by the utility node into individual
+  thruster wrench commands.
+
+  $u = [u_0, u_1, u_2, \alpha_1, \alpha_2]^\top$
+
+  - $u_0 \in [-1, 1]$, Controls the force of the tunnel thruster
+  - $u_1 \in [0, 1]$, Controls the force of the port thruster
+  - $u_2 \in [0, 1]$, Controls the force of the starboard thruster
+  - $\alpha_1 \in [-\pi, \pi]$, Controls the force direction for port thruster
+  - $\alpha_2 \in [-\pi, \pi]$, Controls the force direction for starboard thruster
 
 - **topic**: `/joy`
 

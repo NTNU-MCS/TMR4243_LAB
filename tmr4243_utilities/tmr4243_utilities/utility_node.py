@@ -28,7 +28,9 @@ import rclpy.node
 
 import std_msgs.msg
 import geometry_msgs.msg
+import nav_msgs.msg
 
+from tf_transformations import euler_from_quaternion
 from tf2_ros import TransformException
 from tf2_ros.buffer import Buffer
 from tf2_ros.transform_listener import TransformListener
@@ -55,45 +57,19 @@ class UtilityNode(rclpy.node.Node):
 
         self.pubs["eta"] = self.create_publisher(
             std_msgs.msg.Float32MultiArray, '/tmr4243/state/eta', 1)
+        self.pubs["nu"] = self.create_publisher(
+            std_msgs.msg.Float32MultiArray, '/tmr4243/state/nu', 1)
         self.pubs["tau"] = self.create_publisher(
             std_msgs.msg.Float32MultiArray, '/tmr4243/state/tau', 1)
         self.subs["u_cmd"] = self.create_subscription(
             std_msgs.msg.Float32MultiArray, '/tmr4243/command/u', self.u_command_callback, 10)
 
+        self.subs["odometry"] = self.create_subscription(
+            nav_msgs.msg.Odometry, 'measurement/odom', self.odometry_callback, 10)
+
         self.tau = np.zeros(3)
-
-        self.state_loop = self.create_timer(0.1, self.state_timer_callback)
-
-    def state_timer_callback(self):
-
-        try:
-            pose = self.tf_buffer.lookup_transform(
-                "world",
-                "base_link",
-                rclpy.time.Time())
-            eta = [None] * 3
-
-            eta[0] = pose.transform.translation.x
-            eta[1] = pose.transform.translation.y
-
-            eta[2], _, _ = quat(
-                pose.transform.rotation.w,
-                pose.transform.rotation.x,
-                pose.transform.rotation.y,
-                pose.transform.rotation.z
-            ).yaw_pitch_roll
-
-            msg = std_msgs.msg.Float32MultiArray()
-            msg.data = eta
-            self.pubs['eta'].publish(msg)
-
-        except TransformException as ex:
-            self.get_logger().info(
-                f'Could not transform : {ex}', throttle_duration_sec=5.0)
-
-        msg = std_msgs.msg.Float32MultiArray()
-        msg.data = list(self.tau.flatten())
-        self.pubs['tau'].publish(msg)
+        self.eta = np.zeros(3)
+        self.nu = np.zeros(3)
 
     def u_command_callback(self, msg: std_msgs.msg.Float32MultiArray):
 
@@ -135,6 +111,25 @@ class UtilityNode(rclpy.node.Node):
         np.clip(u2, -2.0, 2.0)
 
         self.tau = B @ np.array([[u0], [u1], [u2]])
+
+        self.pubs['tau'].publish(std_msgs.msg.Float32MultiArray(data=list(self.tau.flatten())))
+
+    def odometry_callback(self, msg: nav_msgs.msg.Odometry):
+        self.nu[0] = msg.twist.twist.linear.x
+        self.nu[1] = msg.twist.twist.linear.y
+        self.nu[2] = msg.twist.twist.angular.z
+
+        self.eta[0] = msg.pose.pose.position.x
+        self.eta[1] = msg.pose.pose.position.y
+        _, _, self.eta[2] = euler_from_quaternion([
+            msg.pose.pose.orientation.x,
+            msg.pose.pose.orientation.y,
+            msg.pose.pose.orientation.z,
+            msg.pose.pose.orientation.w
+        ])
+
+        self.pubs['nu'].publish(std_msgs.msg.Float32MultiArray(data=list(self.nu.flatten())))
+        self.pubs['eta'].publish(std_msgs.msg.Float32MultiArray(data=list(self.eta.flatten())))
 
 
 def main(args=None):
