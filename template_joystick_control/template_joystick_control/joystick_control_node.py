@@ -55,6 +55,9 @@ class JoystickControl(rclpy.node.Node):
 
         self.pubs["u_cmd"] = self.create_publisher(
             std_msgs.msg.Float32MultiArray, '/tmr4243/command/u', 10)
+        
+        self.pubs["tau_cmd"] = self.create_publisher(
+            std_msgs.msg.Float32MultiArray, '/tmr4243/command/tau', 10)
 
         self.task = JoystickControl.TASK_SIMPLE
         self.declare_parameter(
@@ -120,9 +123,13 @@ class JoystickControl(rclpy.node.Node):
                 f"Result has length of {len(result)} but it should be 5. Aborting...", throttle_duration_sec=1.0)
             return
 
-        u_cmd = std_msgs.msg.Float32MultiArray()
-        u_cmd.data = result.flatten().tolist()
-        self.pubs["u_cmd"].publish(u_cmd)
+        msg_out = std_msgs.msg.Float32MultiArray()
+        msg_out.data = result.flatten().tolist()
+
+        if self.task == JoystickControl.TASK_SIMPLE:
+            self.pubs["u_cmd"].publish(msg_out)
+        else:
+            self.pubs["tau_cmd"].publish(msg_out)
 
 
     def eta_callback(self, msg):
