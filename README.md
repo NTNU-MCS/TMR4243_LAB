@@ -59,6 +59,19 @@ python.
 ros2 launch tmr4243_utilities demo.simulation.launch.py
 ```
 
+## Web joystick (browser -> `/joy`)
+
+If you run the simulation over WSL or virtual machine where you might have problem with joystick passthrough, you can use the web joystick bridge. It uses a simple websocket server to send joystick inputs from a web page to ROS. To use it:
+
+```bash
+ros2 launch tmr4243_utilities web_joystick.launch.py
+```
+
+Open the page in a browser on the same machine:
+`http://127.0.0.1:8000/joystick.html`
+
+By default it binds only to localhost. To use it from another device on the same network, set `http_host:=0.0.0.0 ws_host:=0.0.0.0`.
+
 See the simulation
 ![Simulation](docs/quickstart_rviz.png)
 
@@ -109,13 +122,13 @@ See the simulation
 
   **type**: `sensor_msgs/msg/Joy`
 
-  **description**: Joystick inputs
+  **description**: Joystick inputs. When using the web joystick bridge, `Joy.buttons` contains pressed state (0/1) and analog button values (e.g., triggers) are appended to the end of `Joy.axes`.
 
 ## Custom Messages
 
 - `tmr4243_interfaces/msg/observer.msg`
 
-    ```
+  ```text
     float64[] eta
     float64[] nu
     float64[] bias
@@ -123,7 +136,7 @@ See the simulation
 
 - `tmr4243_interfaces/msg/reference.msg`
 
-    ```
+  ```text
     float64[] eta_d
     float64[] eta_ds
     float64[] eta_ds2
@@ -134,7 +147,7 @@ See the simulation
 
 - `tmr4243_interfaces/msg/s.msg`
 
-    ```
+  ```text
     float64 s
     float64 s_dot
     ```

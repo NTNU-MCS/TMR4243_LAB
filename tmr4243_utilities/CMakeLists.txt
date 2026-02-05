@@ -18,13 +18,14 @@ ament_python_install_package(${PROJECT_NAME})
 ament_cmake_symlink_install_directory(DIRECTORY ${PROJECT_SOURCE_DIR})
 
 install(
-  DIRECTORY launch
+  DIRECTORY launch public
   DESTINATION share/${PROJECT_NAME}
 )
 
 install(
   PROGRAMS
     ${PROJECT_NAME}/utility_node.py
+    ${PROJECT_NAME}/web_joystick_node.py
   DESTINATION lib/${PROJECT_NAME}
 )
 

@@ -1,3 +1,4 @@
 pyquaternion
 numpy
 scipy
+websockets

@@ -1,5 +1,0 @@
-- name: incebellipipo.ros2
-  src: https://github.com/incebellipipo/ansible-role-ros2.git
-  version: master
-  scm: git
-- name: gantsign.visual-studio-code
