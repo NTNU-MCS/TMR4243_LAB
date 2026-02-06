@@ -55,7 +55,7 @@ class JoystickControl(rclpy.node.Node):
 
         self.pubs["u_cmd"] = self.create_publisher(
             std_msgs.msg.Float32MultiArray, '/tmr4243/command/u', 10)
-        
+
         self.pubs["tau_cmd"] = self.create_publisher(
             std_msgs.msg.Float32MultiArray, '/tmr4243/command/tau', 10)
 
@@ -74,8 +74,8 @@ class JoystickControl(rclpy.node.Node):
         self.joystick_mapping = JoystickMapping()
 
         joystick_params = [
-            'LEFT_STICK_HORIZONTAL', 'LEFT_STICK_VERTICAL', 'RIGHT_STICK_HORIZONTAL', 
-            'RIGHT_STICK_VERTICAL', 'LEFT_TRIGGER', 'RIGHT_TRIGGER', 
+            'LEFT_STICK_HORIZONTAL', 'LEFT_STICK_VERTICAL', 'RIGHT_STICK_HORIZONTAL',
+            'RIGHT_STICK_VERTICAL', 'LEFT_TRIGGER', 'RIGHT_TRIGGER',
             'A_BUTTON', 'B_BUTTON', 'X_BUTTON', 'Y_BUTTON'
         ]
 
@@ -96,7 +96,7 @@ class JoystickControl(rclpy.node.Node):
             f"Parameter task: {self.task}", throttle_duration_sec=1.0)
 
     def joy_callback(self, msg):
-        result = np.zeros((5, 1), dtype=float)
+        result = np.empty((0, ), dtype=float)
 
         if self.task == JoystickControl.TASK_SIMPLE:
             result = joystick_simple(msg, self.joystick_mapping)
@@ -116,7 +116,6 @@ class JoystickControl(rclpy.node.Node):
 
         elif self.task == JoystickControl.TASK_BODY:
             result = joystick_force_body_relative(msg, self.joystick_mapping)
-
 
         if len(result) != 5:
             self.get_logger().warn(
