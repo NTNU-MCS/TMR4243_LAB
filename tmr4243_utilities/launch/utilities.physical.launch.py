@@ -10,13 +10,16 @@ from tmr4243_utilities.utilities import anon
 
 def generate_launch_description():
 
+    vessel_name = "voyager"
+    vessel_model = "voyager"
+
     node_utilities = launch_ros.actions.Node(
         package='tmr4243_utilities',
         executable='utility_node.py',
         name=f"{anon()}utilities",
+        namespace=vessel_name,
         output='screen'
     )
-
 
     viz_launch = launch.actions.IncludeLaunchDescription(
         launch.launch_description_sources.PythonLaunchDescriptionSource(
@@ -39,7 +42,5 @@ def generate_launch_description():
     ld = launch.LaunchDescription()
     ld.add_action(node_utilities)
     ld.add_action(group_gui)
-
-
 
     return ld
